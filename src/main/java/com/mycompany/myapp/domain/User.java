@@ -93,6 +93,10 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Location> locations = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -196,6 +200,31 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public Set<Location> getLocations() {
+        return this.locations;
+    }
+
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
+    }
+
+    public User locations(Set<Location> locations) {
+        this.setLocations(locations);
+        return this;
+    }
+
+    public User addLocation(Location location) {
+        this.locations.add(location);
+        location.setUser(this);
+        return this;
+    }
+
+    public User removeLocation(Location location) {
+        this.locations.remove(location);
+        location.setUser(null);
+        return this;
     }
 
     @Override
